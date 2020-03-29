@@ -84,17 +84,36 @@ draw.2.Venn <- function (area1, area2, intersection, condition) {
   draw.pairwise.venn(area1 = length(area1),
                      area2 = length(area2),
                      cross.area = length(intersection),
-                     c(paste0(condition, "/NT"), paste0(condition, "/siCTRL")), 
+                     #c(paste0(condition, "/NT"), paste0(condition, "/siCTRL")), 
                      fill = c("dodgerblue1", "goldenrod1"),
                      fontfamily = "Arial", cat.fontfamily = "Arial",
-                     cex = 4, cat.cex = 4, cat.pos = c(30, 215),
-                     cat.dist = .05, scaled = TRUE) 
+                     cex = 0, 
+                     # cat.cex = 4,
+                     # cat.pos = c(30, 215),
+                     # cat.dist = .05,
+                     scaled = TRUE)
 }
 
 
 for (i in names(filtered.up.final)) {
   print(i)
   grid.newpage()
+  print(draw.2.Venn(area1 = filtered.up.final[[paste0(i)]][["siCTRL"]][["RefSeq"]],
+                    area2 = filtered.up.final[[paste0(i)]][["NT"]][["RefSeq"]],
+                    intersection = filtered.up.final[[paste0(i)]][["Overlap"]],
+                    condition = i))
+  print(draw.2.Venn(area1 = filtered.up.final[[paste0(i)]][["siCTRL"]][["RefSeq"]],
+                    area2 = filtered.up.final[[paste0(i)]][["NT"]][["RefSeq"]],
+                    intersection = filtered.up.final[[paste0(i)]][["Overlap"]],
+                    condition = i))
+  print(draw.2.Venn(area1 = filtered.up.final[[paste0(i)]][["siCTRL"]][["RefSeq"]],
+                    area2 = filtered.up.final[[paste0(i)]][["NT"]][["RefSeq"]],
+                    intersection = filtered.up.final[[paste0(i)]][["Overlap"]],
+                    condition = i))
+  print(draw.2.Venn(area1 = filtered.up.final[[paste0(i)]][["siCTRL"]][["RefSeq"]],
+                    area2 = filtered.up.final[[paste0(i)]][["NT"]][["RefSeq"]],
+                    intersection = filtered.up.final[[paste0(i)]][["Overlap"]],
+                    condition = i))
   print(draw.2.Venn(area1 = filtered.up.final[[paste0(i)]][["siCTRL"]][["RefSeq"]],
                     area2 = filtered.up.final[[paste0(i)]][["NT"]][["RefSeq"]],
                     intersection = filtered.up.final[[paste0(i)]][["Overlap"]],

@@ -135,7 +135,7 @@ Heatmap(HeatmapData_matrix,
         cluster_columns = TRUE,
         column_names_side = "top", column_dend_side = "top",
         row_names_side = "left", row_dend_side = "left",
-        row_names_gp = gpar(fontsize = 14),
+        row_names_gp = gpar(fontsize = 14, fontface = "bold"),
         row_dend_width = unit(2, "cm"),
         clustering_distance_rows = "euclidean", clustering_method_rows = "ward.D",
         name = "z-score",
@@ -155,15 +155,15 @@ Heatmap(HeatmapData_matrix,
         cluster_columns = TRUE,
         column_names_side = "top", column_dend_side = "top",
         row_names_side = "left", row_dend_side = "left",
-        row_names_gp = gpar(fontsize = 14),
+        row_names_gp = gpar(fontsize = 14, fontface = "bold"),
         row_dend_width = unit(2, "cm"),
         clustering_distance_rows = "euclidean", clustering_method_rows = "ward.D",
         name = "z-score",
         column_title_gp = gpar(fontsize = 14, fontface = "bold", fontfamily = "Arial"), 
         row_title_rot = 0,
         col = colorRamp2(c(-2.5, 0, 2.5), c("blue", "white", "red")),
-        row_title_gp = gpar(fontsize = 40, fontface = "bold"))
-
+        row_title_gp = gpar(fontsize = 40, fontface = "bold")
+        )
 
 
 ###############################
@@ -260,7 +260,7 @@ heatmap.generator <- function(
           cluster_columns = TRUE,
           column_names_side = "top", column_dend_side = "top",
           row_names_side = "left", row_dend_side = "left",
-          row_names_gp = gpar(fontsize = 14),
+          row_names_gp = gpar(fontsize = 14, fontface = "bold"),
           row_dend_width = unit(2, "cm"),
           clustering_distance_rows = "euclidean", clustering_method_rows = "ward.D",
           name = "z-score",
@@ -270,7 +270,13 @@ heatmap.generator <- function(
           row_title_rot = 0,
           col = colorRamp2(c(-2.5, 0, 2.5), c("blue", "white", "red")),
           rect_gp = gpar(col = "black"),
-          row_title_gp = gpar(fontsize = 40, fontface = "bold"))
+          row_title_gp = gpar(fontsize = 40, fontface = "bold"),
+  heatmap_legend_param = list(
+    title = "z-score", 
+    title_gp = gpar(fontsize = 14, fontface = "bold"),
+    title_position = "leftcenter-rot",
+    direction = "vertical"
+  ))
 }
 
 total.process.string <- c()

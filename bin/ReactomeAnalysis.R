@@ -89,14 +89,17 @@ for (ds in names(Pathway.up)) {
 # 
 # Pathway.up_final <- rbind(Pathway.up_final, vector)
 
-list_of_pathways <- c("Signaling by Interleukins", "Cytokine Signaling in Immune system",
-                      "Signaling by GPCR", "Signaling by Receptor Tyrosine Kinases",
-                      "Unfolded Protein Response (UPR)", "Interleukin-4 and 13 signaling",
-                      "Interleukin-20 family signaling", "MAPK family signaling cascades",
-                      "PI5P, PP2A and IER3 Regulate PI3K/AKT Signaling",
-                      "RAF/MAP kinase cascade")
+list_of_pathways <- c("Signaling by Interleukins",
+                      "Signaling by GPCR", 
+                      "Signaling by Receptor Tyrosine Kinases",
+                      "MAPK family signaling cascades",
+                      "Interleukin-20 family signaling",
+                      "Unfolded Protein Response (UPR)", 
+                      #"PI5P, PP2A and IER3 Regulate PI3K/AKT Signaling",
+                      "Interleukin-4 and 13 signaling",
+                      "PI3K/AKT Signaling in Cancer")
 
-Pathway.up_final <- filter(Pathway.up_final, 
+Pathway.up_final <- filter(Pathway.up_final,
                            Pathway.up_final$Description %in% list_of_pathways)
 
 rm(a, cutoff, ds, temp)
