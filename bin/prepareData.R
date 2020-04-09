@@ -5,6 +5,7 @@ suppressPackageStartupMessages({
   library(readxl)
   library(WriteXLS)
   
+  library(tidyr)
   library(dplyr)
   library(tibble)
   library(stringr)
@@ -75,7 +76,7 @@ for(c in colnames(DF)) {
   new_colnames = c(new_colnames, temp)
 }
 
-rm(temo, c)
+rm(temp, c)
 
 colnames(DF) <- new_colnames
 
