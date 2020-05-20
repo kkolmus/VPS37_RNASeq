@@ -115,7 +115,7 @@ flog.debug("Heatmap for differentially regulated genes")
 TPM_HM = readRDS(file.path(proj.dir, data.dir, "DF.TPM_normalization_UPandDOWNgenes.RDS"))
 
 # filter data to select upregulated genes
-HeatmapData <- filter(TPM_HM, RefSeq %in% res$REFSEQ)
+HeatmapData <- filter(TPM_HM, RefSeq %in% res)
 HeatmapData_matrix <- as.matrix(HeatmapData[ , c(3:11)])
 HeatmapData_matrix <- t(HeatmapData_matrix)
 
@@ -274,12 +274,21 @@ heatmap.generator(dataset = DF, TPM_HM = TPM_HM, list.of.BP = BP.sim.cutoff,
 
 saveRDS(total.process.string, file.path(proj.dir, data.dir, "inflammatory_response_genes.RDS"))
 
+inflammatory_response_genes <- readRDS(file.path(proj.dir, data.dir, "inflammatory_response_genes.RDS"))
+inflammatory_response_genes <- t(inflammatory_response_genes)
+write.table(inflammatory_response_genes, file.path(proj.dir, data.dir, "inflammatory_response_genes.txt"),
+            row.names = FALSE, quote = FALSE, sep = ", ")
+
 total.process.string <- c()
 heatmap.generator(dataset = DF, TPM_HM = TPM_HM, list.of.BP = BP.sim.cutoff, 
                   GOid = "GO:0040008", cutoff = 0.6)
 
 saveRDS(total.process.string, file.path(proj.dir, data.dir, "growth_regulation_genes.RDS"))
 
+growth_regulation_genes <- readRDS(file.path(proj.dir, data.dir, "growth_regulation_genes.RDS"))
+growth_regulation_genes <- t(growth_regulation_genes)
+write.table(growth_regulation_genes, file.path(proj.dir, data.dir, "growth_regulation_genes.txt"),
+            row.names = FALSE, quote = FALSE, sep = ", ")
 
 #### end of modification
 
