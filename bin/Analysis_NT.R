@@ -1,0 +1,200 @@
+# cleaning
+rm(list = ls())
+
+library(readxl)
+library(dplyr)
+library(DESeq2)
+
+# loading data
+setwd("~/Desktop/HT projects/VPS37_RNASeq")
+
+# load data for DESeq2 analysis
+cts <- as.matrix(read.csv("cts.csv", row.names = 1))
+
+coldata <- read.csv("coldata.csv", row.names = 1)
+coldata$batch <- as.factor(coldata$batch)
+coldata <- coldata[, c("batch", "condition")]
+
+colnames(cts) <- sub("X", "", colnames(cts))
+all(rownames(coldata) %in% colnames(cts))
+
+cts <- cts[, rownames(coldata)]
+all(rownames(coldata) == colnames(cts))
+
+# analysis with DESeq2 taking into account batch and condition
+dds <- DESeqDataSetFromMatrix(countData = cts,
+                              colData = coldata,
+                              design = ~ batch + condition)
+dds
+
+# Pre-filtering
+keep <- rowSums(counts(dds)) >= 10
+dds <- dds[keep,]
+
+# Note on factor levels
+dds$condition <- relevel(dds$condition, ref = "NT")
+
+# Differential expression analysis
+dds <- DESeq(dds)
+resultsNames(dds)
+
+# Extracting transformed values
+
+vsd <- vst(dds, blind = FALSE)
+head(assay(vsd), 3)
+
+# write.table(as.data.frame(assay(vsd)),
+#             file = "vsd.txt",
+#             quote = FALSE,
+#             sep = "\t",
+#             row.names = TRUE)
+
+rld <- rlog(dds, blind = FALSE)
+head(assay(rld), 3)
+
+# Effects of transformations on the variance
+
+# this gives log2(n + 1)
+ntd <- normTransform(dds)
+
+library(vsn)
+library(ggplot2)
+
+par(mfrow = c(3,1))
+
+meanSdPlot(assay(ntd))
+meanSdPlot(assay(vsd))
+meanSdPlot(assay(rld))
+
+# Heatmap of the count matrix
+
+library("pheatmap")
+select <- order(rowMeans(counts(dds,normalized=TRUE)),
+                decreasing=TRUE)[1:20]
+df <- as.data.frame(colData(dds)[,c("batch", "condition")])
+
+pheatmap(assay(ntd)[select,], cluster_rows=FALSE, show_rownames=FALSE,
+         cluster_cols=FALSE, annotation_col=df)
+
+pheatmap(assay(vsd)[select,], cluster_rows=FALSE, show_rownames=FALSE,
+         cluster_cols=FALSE, annotation_col=df)
+
+pheatmap(assay(rld)[select,], cluster_rows=FALSE, show_rownames=FALSE,
+         cluster_cols=FALSE, annotation_col=df)
+
+
+# Heatmap of the sample-to-sample distances
+
+sampleDists <- dist(t(assay(vsd)))
+
+library("RColorBrewer")
+sampleDistMatrix <- as.matrix(sampleDists)
+rownames(sampleDistMatrix) <- paste(vsd$batch, vsd$condition, sep="-")
+colnames(sampleDistMatrix) <- paste(vsd$batch, vsd$condition, sep="-")
+colors <- colorRampPalette( rev(brewer.pal(9, "Blues")) )(255)
+pheatmap(sampleDistMatrix,
+         clustering_distance_rows=sampleDists,
+         clustering_distance_cols=sampleDists,
+         col = colors)
+
+# Principal component plot of the samples
+
+plotPCA(vsd, intgroup=c("batch", "condition"))
+
+pcaData <- plotPCA(vsd, intgroup=c("batch", "condition"), returnData=TRUE)
+percentVar <- round(100 * attr(pcaData, "percentVar"))
+ggplot(pcaData, aes(PC1, PC2, color=condition, shape=batch)) +
+  geom_point(size=3) +
+  ggtitle("PCA Vps4 project data") +
+  xlab(paste0("PC1: ",percentVar[1],"% variance")) +
+  ylab(paste0("PC2: ",percentVar[2],"% variance")) + 
+  coord_fixed()
+
+# Comparison of conditions against D_NT & exporting data
+
+# Alternatively use the lfcShrink function to remove the noise 
+# associated with log2 fold changes from low count genes without 
+# requiring arbitrary filtering thresholds
+
+siCTRL.vs.NT <- results(dds, contrast = c("condition", "siCTRL", "NT"), 
+                         pAdjustMethod = "BH", test = "Wald", alpha = 0.05)
+
+write.table(as.data.frame(siCTRL.vs.NT),
+            file = "siCTRL.vs.NT.txt",
+            quote = FALSE,
+            sep = "\t",
+            row.names = TRUE)
+
+
+
+siVPS37ABC_1.vs.NT <- results(dds, contrast = c("condition", "siVPS37ABC_1", "NT"),
+                              pAdjustMethod = "BH", test = "Wald", alpha = 0.05)
+
+write.table(as.data.frame(siVPS37ABC_1.vs.NT),
+            file = "siVPS37ABC_1.vs.NT.txt",
+            quote = FALSE,
+            sep = "\t",
+            row.names = TRUE)
+
+
+siVPS37AB_1.vs.NT <- results(dds, contrast = c("condition", "siVPS37AB_1", "NT"),
+                             pAdjustMethod = "BH", test = "Wald", alpha = 0.05)
+
+write.table(as.data.frame(siVPS37AB_1.vs.NT),
+            file = "siVPS37AB_1.vs.NT.txt",
+            quote = FALSE,
+            sep = "\t",
+            row.names = TRUE)
+
+
+siVPS37AC_1.vs.NT <- results(dds, contrast = c("condition", "siVPS37AC_1", "NT"),
+                             pAdjustMethod = "BH", test = "Wald", alpha = 0.05)
+
+write.table(as.data.frame(siVPS37AC_1.vs.NT),
+            file = "siVPS37AC_1.vs.NT.txt",
+            quote = FALSE,
+            sep = "\t",
+            row.names = TRUE)
+
+
+siVPS37BC_1.vs.NT <- results(dds, contrast = c("condition", "siVPS37BC_1", "NT"),
+                             pAdjustMethod = "BH", test = "Wald", alpha = 0.05)
+
+write.table(as.data.frame(siVPS37BC_1.vs.NT),
+            file = "siVPS37BC_1.vs.NT.txt",
+            quote = FALSE,
+            sep = "\t",
+            row.names = TRUE)
+
+
+siVPS37A_1.vs.NT <- results(dds, contrast = c("condition", "siVPS37A_1", "NT"),
+                            pAdjustMethod = "BH", test = "Wald", alpha = 0.05)
+
+write.table(as.data.frame(siVPS37A_1.vs.NT),
+            file = "siVPS37A_1.vs.NT.txt",
+            quote = FALSE,
+            sep = "\t",
+            row.names = TRUE)
+
+
+siVPS37B_1.vs.NT <- results(dds, contrast = c("condition", "siVPS37B_1", "NT"),
+                            pAdjustMethod = "BH", test = "Wald", alpha = 0.05)
+
+write.table(as.data.frame(siVPS37B_1.vs.NT),
+            file = "siVPS37B_1.vs.NT.txt",
+            quote = FALSE,
+            sep = "\t",
+            row.names = TRUE)
+
+
+siVPS37C_1.vs.NT <- results(dds, contrast = c("condition", "siVPS37C_1", "NT"),
+                            pAdjustMethod = "BH", test = "Wald", alpha = 0.05)
+
+write.table(as.data.frame(siVPS37C_1.vs.NT),
+            file = "siVPS37C_1.vs.NT.txt",
+            quote = FALSE,
+            sep = "\t",
+            row.names = TRUE)
+
+
+sessionInfo()
